@@ -29,14 +29,14 @@ namespace WebApp.Controllers
             };
 
             // Добавим в базу
-            await _repo.AddUser(newUser);
+            //await _repo.AddUser(newUser);
 
             // Выведем результат
-            Console.WriteLine($"User with id {newUser.Id}, named {newUser.FirstName} was successfully added on {newUser.JoinDate}");
+            //Console.WriteLine($"User with id {newUser.Id}, named {newUser.FirstName} was successfully added on {newUser.JoinDate}");
 
             return View();
         }
-
+        
         public IActionResult Privacy()
         {
             return View();

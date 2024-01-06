@@ -11,11 +11,13 @@ namespace WebApp
         {
             var builder = WebApplication.CreateBuilder(args);
             string? connection = builder.Configuration.GetConnectionString("DefaultConnection");
-            builder.Services.AddDbContext<BlogContext>(options => options.UseSqlServer(connection), ServiceLifetime.Singleton);
+  
             builder.Services.AddControllersWithViews();
+
             builder.Services.AddSingleton<IBlogRepository, BlogRepository>();
+            builder.Services.AddSingleton<IRequestRepository, RequestRepository>();
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<BlogContext>(options => options.UseSqlServer(connection), ServiceLifetime.Singleton);
 
             var app = builder.Build();
 
