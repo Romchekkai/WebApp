@@ -8,38 +8,36 @@ namespace WebApp.Controllers
 {
     public class LogsController : Controller
     {
-        private readonly IRequestRepository _requestRepository;
+        private readonly IRequestRepository _repo;
 
-        public LogsController(IRequestRepository requestRepository)
+        public LogsController(IRequestRepository repo)
         {
-            _requestRepository = requestRepository;
+            _repo = repo;
         }
+
 
         public async Task<IActionResult> Index()
         {
-
-            return View();
+            var logs = await _repo.GetRequest();
+            return View(logs);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Logs()
-        {
-            var request = await _requestRepository.GetRequest();
-            return View(request);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Logs(Request request)
-        {
-            await _requestRepository.AddRequest(request);
-            return View(request);
-        }
-
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }
+/*public LogsController(IRequestRepository repo)
+        {
+            _repo = repo;
+        }
+        public IActionResult Logs() 
+        { return View(); }
+        public async Task<IActionResult> Logs()
+        {
+            var logs = await _repo.GetRequest();
+            return View(logs);
+        }
+
+ 
+ 
+ 
+ var request = await _repo.GetRequest();
+            return View(request);*/

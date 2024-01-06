@@ -5,37 +5,39 @@ namespace WebApp.Middlewares
     public class LoggingMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IRequestRepository _repository;
+        private readonly IRequestRepository _logRepo;
 
         /// <summary>
         ///  Middleware-компонент должен иметь конструктор, принимающий RequestDelegate
         /// </summary>
-        public LoggingMiddleware(RequestDelegate next, IRequestRepository repository)
+        public LoggingMiddleware(RequestDelegate next, IRequestRepository logRepo)
         {
             _next = next;
-            _repository = repository;
+            _logRepo = logRepo;
         }
 
         /// <summary>
-        ///  Необходимо реализовать метод Invoke  или InvokeAsync
+        ///  Необходимо реализовать метод Invoke или InvokeAsync
         /// </summary>
         public async Task InvokeAsync(HttpContext context)
         {
-            // Для логирования данных о запросе используем свойста объекта HttpContext
-            string logMessage = $"[{DateTime.Now}]: New request to http://{context.Request.Host.Value + context.Request.Path}{Environment.NewLine}";
-            var request = new Request()
+            LogToConsole(context);
+            await LogToDB(context);
+            await _next.Invoke(context);
+        }
+
+        private async Task LogToDB(HttpContext context)
+        {
+            Request request = new()
             {
                 Id = Guid.NewGuid(),
                 Date = DateTime.Now,
-                Url = logMessage
+                Url = $"http://{context.Request.Host.Value + context.Request.Path}"
             };
 
-            await _repository.AddRequest(request);
-
-            await _next.Invoke(context);
-            // Передача запроса далее по конвейеру
-            await _next.Invoke(context);
+            await _logRepo.AddRequest(request);
         }
-    }
 
+        private static void LogToConsole(HttpContext context) => Console.WriteLine($"[{DateTime.Now}]: New request to http://{context.Request.Host.Value + context.Request.Path}");
+    }
 }

@@ -1,6 +1,8 @@
-﻿namespace WebApp.Models.Db.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WebApp.Models.Db.Entities
 {
-    
+    [Table("Requests")]
     public class Request
     {
         public Guid Id { get; set; }
